@@ -96,6 +96,29 @@ endif::arc42help[]
 [options="header",cols="1,2,2"]
 |===
 |Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+
+| Marketing Manager, Bold Branding Agency
+| Bold Branding Agency
+| Wants the app to attract users and look appealing; needs clear messaging around the subscription model
+
+| Project Manager, Digital Dreams Inc.
+| Digital Dreams Inc.
+| Wants the project delivered on time and within budget with no major issues at launch
+
+| Lead Developer, Pixel Perfect Solutions
+| Pixel Perfect Solutions
+| Needs clear requirements and a working Pixlr integration; wants clean code and fast load times
+
+| UX/UI Designer, Creative Co.
+| Creative Co.
+| Wants a clean, easy-to-use design that works well on both iOS and Android
+
+| User Representative, Photography Enthusiast
+| User Representative
+| Wants easy photo uploads, fun community challenges, and good editing tools and filters
+
+| Photography Expert, Snap & Shoot Magazine
+| Snap & Shoot Magazine
+| Wants the app to support high-quality photos and serious editing tools, not just casual sharing
+
 |===
