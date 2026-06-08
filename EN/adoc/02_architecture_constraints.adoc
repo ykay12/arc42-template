@@ -33,19 +33,15 @@ The following constraints were identified from the Business Requirements Documen
 
 === Organisational Constraints
  
-[cols="2,4", options="header"]
+[options="header",cols="1,2,3"]
 |===
-| Constraint | Rationale
- 
-| Agile delivery in 2-week sprints
-| Pixel Perfect Solutions standard delivery model.
- 
-| Architecture decisions documented in ADRs
-| Required by Digital Dreams Inc. project governance.
- 
+| ID | Constraint | Rationale
+
+| OC_1
 | GDPR compliance mandatory
 | Users expected globally; EU users require GDPR-compliant data handling, right-to-erasure support, and data residency options.
- 
+
+| OC_2
 | App Store and Play Store approval pipeline
 | All releases must pass Apple and Google review; no undisclosed third-party data sharing.
 |===
