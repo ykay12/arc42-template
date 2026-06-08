@@ -3,122 +3,77 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Describes the relevant requirements and the driving forces that software architects and development team must consider. 
-These include
-
-* underlying business goals, 
-* essential features, 
-* essential functional requirements, 
-* quality goals for the architecture and
-* relevant stakeholders and their expectations
-****
-endif::arc42help[]
-
 === Requirements Overview
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Short description of the functional requirements, driving forces, extract (or abstract)
-of requirements. Link to (hopefully existing) requirements documents
-(with version number and information where to find it).
-
-.Motivation
-From the point of view of the end users a system is created or modified to
-improve support of a business activity and/or improve the quality.
-
-.Form
-Short textual description, probably in tabular use-case format.
-If requirements documents exist this overview should refer to these documents.
-
-Keep these excerpts as short as possible. Balance readability of this document with potential redundancy w.r.t to requirements documents.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 documentation.
-
-****
-endif::arc42help[]
+* Photo sharing with tags and hashtags
+* Cross-platform sharing
+* Editing tools
+* Filter system
+* User-generated competitions
+* Social feeds
+* General engagement with user-generated content
+* Subscription model
 
 === Quality Goals
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-The top three (max five) quality goals for the architecture whose fulfillment is of highest importance to the major stakeholders. 
-We really mean quality goals for the architecture. Don't confuse them with project goals.
-They are not necessarily identical.
+[options="header",cols="1,2,4"]
+|===
+|Priority|Quality Goal|Motivation
 
-Consider this overview of potential topics (based upon the ISO 25010 standard):
+|1
+|Maintainability
+|High code quality to minimize technical debt and enable fast onboarding of new developers.
 
-image::01_2_iso-25010-topics-EN-2023.drawio.png["Categories of Quality Requirements"]
+|2
+|Operability
+|Maximally automated operations (CI/CD) to reduce the burden on a small team.
 
-.Motivation
-You should know the quality goals of your most important stakeholders, since they will influence fundamental architectural decisions. 
-Make sure to be very concrete about these qualities, avoid buzzwords.
-If you as an architect do not know how the quality of your work will be judged...
+|3
+|Performance Efficiency
+|Minimal latency when loading images for a smooth user experience without wait times.
 
-.Form
-A table with quality goals and concrete scenarios, ordered by priorities
-****
-endif::arc42help[]
+|4
+|Usability
+|Intuitive UI/UX for all skill levels; complex image editing must be simple and usable without prior knowledge.
+
+|5
+|Cost Efficiency
+|Focus on cost-efficient resources.
+
+|6
+|Security
+|Highest protection for financial and personal data to ensure trust and compliance.
+
+|===
 
 === Stakeholders
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Explicit overview of stakeholders of the system, i.e. all person, roles or organizations that
-
-* should know the architecture
-* have to be convinced of the architecture
-* have to work with the architecture or with code
-* need the documentation of the architecture for their work
-* have to come up with decisions about the system or its development
-
-.Motivation
-You should know all parties involved in development of the system or affected by the system.
-Otherwise, you may get nasty surprises later in the development process.
-These stakeholders determine the extent and the level of detail of your work and its results.
-
-.Form
-Table with role names, person names, and their expectations with respect to the architecture and its documentation.
-****
-endif::arc42help[]
 
 [options="header",cols="1,2,2"]
 |===
 |Role/Name|Contact|Expectations
 
-| Marketing Manager, Bold Branding Agency
-| Bold Branding Agency
-| Wants the app to attract users and look appealing; needs clear messaging around the subscription model
+|Sarah Chen, Marketing Manager
+|Bold Branding Agency
+|Wants the app to attract users and look good; needs clear messaging around the subscription model.
 
-| Project Manager, Digital Dreams Inc.
-| Digital Dreams Inc.
-| Wants the project delivered on time and within budget with no major issues at launch
+|Michael Nguyen, Project Manager
+|Digital Dreams Inc.
+|Wants the project delivered on time and within budget, without major issues at launch.
 
-| Lead Developer, Pixel Perfect Solutions
-| Pixel Perfect Solutions
-| Needs clear requirements and a working Pixlr integration; wants clean code and fast load times
+|Ava Patel, Lead Developer
+|Pixel Perfect Solutions
+|Needs clear requirements and a working Pixlr integration; wants clean code and fast load times.
 
-| UX/UI Designer, Creative Co.
-| Creative Co.
-| Wants a clean, easy-to-use design that works well on both iOS and Android
+|Emily Wong, UX/UI Designer
+|Creative Co.
+|Wants a clear, easy-to-use design that works well on iOS and Android for all users.
 
-| User Representative, Photography Enthusiast
-| User Representative
-| Wants easy photo uploads, fun community challenges, and good editing tools and filters
+|Samir Singh, User Representative
+|Photography Enthusiast
+|Wants easy photo uploading, fun through community challenges, and good editing tools and filters.
 
-| Photography Expert, Snap & Shoot Magazine
-| Snap & Shoot Magazine
-| Wants the app to support high-quality photos and serious editing tools, not just casual sharing
+|Lucas Rodriguez, Photography Expert
+|Snap & Shoot Magazine
+|Wants the app to support high-quality photos and serious editing tools, not just simple sharing.
 
 |===

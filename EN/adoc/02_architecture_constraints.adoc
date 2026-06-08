@@ -3,27 +3,30 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-architecture-constraints]]
 == Architecture Constraints
 
+The following constraints were identified from the Business Requirements Document and directly shaped all architectural decisions.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+[options="header",cols="1,2,3"]
+|===
+|ID|Constraint|Background / Motivation
 
-.Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+|TC_1
+|Cross-platform mobile support: iOS and Android
+|The startup targets a global audience of millennials and Gen Z users on both major mobile platforms. Using a cross-platform framework reduces development cost, shortens time-to-market, and simplifies maintenance for a startup with limited resources.
 
-.Form
-Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
+|TC_2
+|The architecture must support integration with Pixlr
+|Advanced editing and filtering tools are a core business requirement. Since these capabilities are partially outsourced to Pixlr, the system architecture must allow secure API communication, error handling, and future replacement or extension of third-party services.
 
+|TC_3
+|The application must comply with relevant security and privacy regulations such as GDPR
+|The app stores personal user accounts, images, comments, and subscription information. As the app operates globally and targets users in Europe, protecting user privacy and ensuring secure authentication and data storage are mandatory.
 
-.Further Information
+|TC_4
+|The architecture must support scalable cloud-based infrastructure
+|The business goal is to attract a large and engaged user base. Image sharing platforms require high storage capacity, fast content delivery, and responsive feeds. The architecture must therefore support horizontal scaling and optimized media delivery, capable of handling increasing image uploads, user interactions, and global traffic with minimal loading times.
 
-See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 documentation.
+|TC_5
+|The system architecture must support freemium functionality, subscription management, and future advertising integrations
+|The startup's business model depends on monthly and annual premium subscriptions, with possible future sponsored content and advertising. The architecture must therefore separate free and premium features securely and allow integration with payment providers and advertising systems later on.
 
-****
-endif::arc42help[]
+|===

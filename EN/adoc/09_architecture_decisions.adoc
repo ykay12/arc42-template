@@ -3,35 +3,32 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-design-decisions]]
 == Architecture Decisions
 
+The following decisions are documented using the Nygard ADR (Architecture Decision Record) structure.
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Important, expensive, large scale or risky architecture decisions including rationales.
-With "decisions" we mean selecting one alternative based on given criteria.
+=== ADR-1: Use React Native as the Cross-Platform Mobile Framework
 
-Please use your judgement to decide whether an architectural decision should be documented
-here in this central section or whether you better document it locally
-(e.g. within the white box template of one building block).
+*Context*: The app needs to run on both iOS and Android with one shared codebase. Building two separate native apps would double development effort, which is not feasible for a startup with limited resources.
 
-Avoid redundancy. 
-Refer to section 4, where you already captured the most important decisions of your architecture.
+*Decision*: We will use React Native as the cross-platform mobile framework.
 
-.Motivation
-Stakeholders of your system should be able to comprehend and retrace your decisions.
+*Consequences*: Faster development with one codebase and a shared component library. However, the app may have slightly lower performance than fully native apps in graphics-intensive scenarios.
 
-.Form
-Various options:
+---
 
-* ADR (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[Documenting Architecture Decisions]) for every important decision
-* List or table, ordered by importance and consequences or:
-* more detailed in form of separate sections per decision
+=== ADR-2: Integrate Pixlr as a Third-Party Image Editing Tool
 
-.Further Information
+*Context*: Image editing features (filters, cropping, adjustments) are a core business requirement. However, building a custom editing engine is out of scope given the team size and budget constraints (TC_2).
 
-See https://docs.arc42.org/section-9/[Architecture Decisions] in the arc42 documentation.
-There you will find links and examples about ADR.
+*Decision*: We will integrate Pixlr as a third-party editing tool via its API.
 
-****
-endif::arc42help[]
+*Consequences*: Quicker delivery of editing features without custom development. However, the app becomes dependent on Pixlr's availability, pricing, and API stability. The architecture must allow Pixlr to be replaced in the future if necessary.
+
+---
+
+=== ADR-3: Implement a Free Membership Tier with a Paid Subscription Tier
+
+*Context*: The app needs a sustainable revenue model from early on. A fully paid app would limit the user base; a fully free app provides no revenue. (TC_5)
+
+*Decision*: We will implement a free membership tier with a paid subscription tier (monthly and annual options).
+
+*Consequences*: Enables monetization early on and attracts a broad user base. However, it requires payment gateway integration, feature-gating logic, and careful separation of free and premium functionality in the architecture.

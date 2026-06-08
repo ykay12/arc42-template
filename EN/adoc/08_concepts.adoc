@@ -3,63 +3,29 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-concepts]]
 == Cross-cutting Concepts
 
+=== Development Concepts
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-This section describes crosscutting concepts (practices, patterns, regulations or solution ideas).
-Such concepts are often related to multiple building blocks. 
-They may include many different topics, such as the topics shown in the following diagram:
+Vividly is built with React Native for cross-platform mobile development, targeting both iOS and Android from a single codebase. The architecture follows clean architecture principles with a clear separation of three layers:
 
-image::08-concepts-EN.drawio.png["Possible topics for crosscutting concepts"]
+* *UI layer* — React Native components, screens, and navigation
+* *Business logic layer* — use cases, state management, and domain rules
+* *Data layer* — repositories, API clients, and local storage
 
-.Motivation
-Concepts form the basis for _conceptual integrity_ (consistency, homogeneity) of the architecture. 
-Thus, they are an important contribution to achieve inner qualities of your system.
+This separation ensures the codebase remains maintainable as the team grows, and makes unit testing each layer independently straightforward.
 
-This is the place in the template that we provided for a cohesive specification of such concepts.
+=== Architecture and Design Patterns
 
-Many of these concepts relate to or influence several of your building blocks. 
+The following patterns are applied consistently across the system:
 
-.Form
-The form can be varied:
+* *MVVM (Model-View-ViewModel)* — used in the UI layer to separate presentation logic from UI components, keeping screens lean and testable.
+* *Repository pattern* — used in the data layer to abstract data sources (REST API, local cache) behind a single interface, so business logic never depends directly on a specific data source.
+* *REST APIs* — all client-server communication follows REST conventions over HTTPS, with JSON as the data format.
 
-* concept papers with any kind of structure
-* example implementations,especially for technical concepts
-* cross-cutting model excerpts or scenarios using notations of the architecture views
+=== Safety and Security Concepts
 
-.Structure
-Pick **only** the most-needed topics for your system and assign each a level-2 heading in this section (e.g. 8.1, 8.2 etc).
+Security measures are applied uniformly across all parts of the system:
 
-DO NOT ATTEMPT to cover all of the topics of the aforementioned diagram.
-
-
-.Further Information
-
-Some topics within systems often concern multiple building blocks, hardware elements or development processes.
-It might be easier to communicate or document such _cross-cutting_ topics at a central location, instead of repeating them in the description of the concerned building blocks, hardware elements or development processes.
-
-Certain concepts might concern **all** elements of a system, others might only be relevant for a few.
-In the diagram above, logging concerns all three components, whereas security is relevant only for two components.
-
-
-See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
-****
-endif::arc42help[]
-
-=== _<Concept 1>_
-
-_<explanation>_
-
-
-
-=== _<Concept 2>_
-
-_<explanation>_
-
-...
-
-=== _<Concept n>_
-
-_<explanation>_
+* *HTTPS* — all API calls are encrypted in transit; plain HTTP is not permitted.
+* *JWT (JSON Web Tokens)* — authentication is stateless and token-based. Tokens are signed server-side and validated on every protected request.
+* *Password hashing* — user passwords are hashed using bcrypt before storage and are never stored or logged in plain text.
+* *GDPR compliance* — personal data, images, and payment information are handled according to GDPR requirements (TC_3), including data minimization and secure storage.
