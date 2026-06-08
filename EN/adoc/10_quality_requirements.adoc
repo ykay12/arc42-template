@@ -1,24 +1,176 @@
-ifndef::imagesdir[:imagesdir: ../images]
-
-[[section-quality-scenarios]]
 == Quality Requirements
+ 
+=== Quality Tree
+ 
+The quality tree structures the top-level quality goals (from Section 1) into concrete sub-characteristics, each linked to the scenarios that make them measurable. Priority is indicated as *(H)* high, *(M)* medium, or *(L)* low.
+ 
+[source]
+----
+Image Sharing App — Quality Tree
+│
+├── Performance (H)
+│   ├── Feed response time          → QS-01  (P95 < 500 ms under 10k concurrent users)
+│   ├── Upload throughput           → QS-02  (20 MB image acknowledged < 3 s)
+│   └── Filter application speed    → QS-06  (in-app filters applied < 1 s on device)
+│
+├── Reliability (H)
+│   ├── Service availability        → QS-03  (SubscriptionSvc outage does not affect active users)
+│   ├── Third-party fault tolerance → QS-07  (Pixlr unavailability falls back gracefully)
+│   └── Data durability             → QS-02  (uploaded images never lost after 201 response)
+│
+├── Security (H)
+│   ├── Token integrity             → QS-04  (expired/revoked JWTs rejected with HTTP 401)
+│   ├── Data privacy                → QS-05  (GDPR erasure completes within 72 hours)
+│   └── Payment safety              →        (Stripe webhook idempotency; see R-06)
+│
+├── Scalability (M)
+│   ├── Horizontal pod scaling      → QS-01  (HPA maintains SLA under load spikes)
+│   └── Storage cost control        →        (CDN cache hit ratio > 90%; see R-02)
+│
+├── Maintainability (M)
+│   ├── Zero-downtime deployment    → QS-06  (rolling deploy of EditingEngine without outage)
+│   ├── Contract stability          →        (Pact tests prevent breaking API changes; TD-04)
+│   └── Independent deployability   →        (each microservice released on its own cadence)
+│
+└── Usability (L)
+    ├── Onboarding simplicity       →        (registration < 60 s; no payment required for free tier)
+    ├── Editing discoverability     →        (Pixlr entry point visible within 2 taps of any image)
+    └── Community engagement        →        (challenge participation reachable from home feed)
+----
+ 
+[cols="1,2,2,1,1", options="header"]
+|===
+| Quality Goal | Sub-characteristic | Scenario / Indicator | Priority | Section ref.
+ 
+| Performance
+| Feed response time
+| P95 < 500 ms at 10k concurrent users
+| H
+| QS-01
+ 
+| Performance
+| Upload acknowledgement
+| < 3 s for 20 MB image on 4G
+| H
+| QS-02
+ 
+| Performance
+| Image derivative availability
+| Processed sizes ready < 10 s after upload
+| M
+| QS-02
+ 
+| Reliability
+| Service degradation isolation
+| SubscriptionSvc outage does not break active sessions
+| H
+| QS-03
+ 
+| Reliability
+| Third-party fault tolerance
+| Pixlr outage handled with graceful fallback
+| H
+| QS-07
+ 
+| Reliability
+| Data durability
+| Zero image loss after HTTP 201 upload confirmation
+| H
+| QS-02
+ 
+| Security
+| Token expiry enforcement
+| Tokens > 15 min (access) or 30 days (refresh) rejected
+| H
+| QS-04
+ 
+| Security
+| GDPR right-to-erasure
+| Full erasure or anonymisation within 72 hours
+| H
+| QS-05
+ 
+| Security
+| Webhook replay protection
+| Duplicate Stripe webhooks produce no duplicate effects
+| M
+| R-06
+ 
+| Scalability
+| Horizontal scaling
+| HPA scales ImageFeed to 12 pods under peak load
+| M
+| QS-01
+ 
+| Scalability
+| Storage cost efficiency
+| CDN cache hit ratio > 90%; Glacier archival after 365 days
+| M
+| R-02
+ 
+| Maintainability
+| Zero-downtime deployability
+| Rolling deploy with no user-visible interruption
+| M
+| QS-06
+ 
+| Maintainability
+| API contract stability
+| Pact contract tests in CI prevent breaking client changes
+| M
+| TD-04
+ 
+| Usability
+| Onboarding speed
+| New user registered and first image uploaded < 5 minutes
+| L
+| —
+ 
+| Usability
+| Feature discoverability
+| Core editing and community features reachable within 2 taps
+| L
+| —
+|===
 
 === Quality Scenarios
-
-[options="header",cols="1,2,3"]
+ 
+[cols="1,2,3,2", options="header"]
 |===
-|Quality Goal|Scenario|Acceptance Criterion
-
-|Performance Efficiency
-|A user uploads a photo on a mobile connection.
-|The photo appears in the feed within 3 seconds.
-
-|Usability
-|A new user opens the app for the first time with no instructions.
-|The user can register, upload a photo, and apply a filter within 5 minutes.
-
-|Security
-|A user's account data and payment information are stored in the system.
-|User passwords and payment data are encrypted; no sensitive data appears in logs or error messages.
-
+| ID | Stimulus | Response | Measurable Target
+ 
+| QS-01
+| 10,000 concurrent users load the home feed simultaneously.
+| The system serves feed responses without degradation.
+| P95 feed response time < 500 ms; error rate < 0.1%.
+ 
+| QS-02
+| A user uploads a 20 MB HEIC image on a 4G connection.
+| The image is uploaded, processed, and visible in the feed.
+| Upload acknowledged < 3 s; processed derivatives available < 10 s.
+ 
+| QS-03
+| SubscriptionSvc becomes unavailable for 5 minutes.
+| Existing users continue to access features; new subscriptions queue.
+| No degradation for users with valid JWTs; new checkout returns 503 with retry-after header.
+ 
+| QS-04
+| A security researcher discovers a JWT without expiry is accepted.
+| The system rejects expired or revoked tokens.
+| Tokens older than 15 minutes (access) or 30 days (refresh) are rejected with HTTP 401.
+ 
+| QS-05
+| A user requests GDPR erasure.
+| All personal data is removed or anonymised.
+| Erasure completed within 72 hours; confirmation email sent; S3 objects deleted.
+ 
+| QS-06
+| A new filter type is added to EditingEngine.
+| The change is deployed without downtime.
+| Zero-downtime rolling deployment; no breaking changes to existing filter API contracts.
+ 
+| QS-07
+| The Pixlr API is unavailable.
+| Users are informed and can use in-app editing tools.
+| Circuit breaker opens within 30 s; user-facing error message displayed; in-app editor remains available.
 |===
