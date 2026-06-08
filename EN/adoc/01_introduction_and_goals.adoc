@@ -4,15 +4,19 @@ ifndef::imagesdir[:imagesdir: ../images]
 == Introduction and Goals
 
 === Requirements Overview
+ 
+The Image Sharing App is a mobile-first platform targeting photography enthusiasts and professionals on iOS and Android. It enables users to share, discover, and edit high-quality images within a community-driven environment that differentiates itself from general social media through advanced editing tools, customisable filters, and structured community features such as challenges and competitions.
+ 
+Key functional requirements derived from the Business Requirements Document:
+ 
+* Users can register, log in, and manage personal profiles and image collections.
+* Users can upload images, add titles and descriptions, and tag them for search and discovery.
+* Users can apply advanced editing tools (colour correction, white balance, exposure, cropping, text overlays, borders) and customisable filters — including filters created and saved by the user.
+* Images can be shared to external platforms (Facebook, Instagram).
+* Users can follow other users, comment on and like images, and participate in community challenges and competitions.
+* The app integrates with Pixlr (cloud-based photo editing SaaS) for additional editing capability without leaving the platform.
+* A freemium subscription model provides a free tier with limited features and monthly/annual paid tiers with full access.
 
-* Photo sharing with tags and hashtags
-* Cross-platform sharing
-* Editing tools
-* Filter system
-* User-generated competitions
-* Social feeds
-* General engagement with user-generated content
-* Subscription model
 
 === Quality Goals
 

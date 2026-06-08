@@ -34,5 +34,56 @@ ifndef::imagesdir[:imagesdir: ../images]
 |===
 
 === Technical Context
-
-_<to be filled>_
+ 
+[cols="2,2,3", options="header"]
+|===
+| Channel | Protocol | Purpose
+ 
+| Mobile App ↔ API Gateway
+| HTTPS / REST / GraphQL
+| All user-initiated requests; JWT bearer tokens for authentication.
+ 
+| Mobile App ↔ CDN
+| HTTPS
+| Static asset and image delivery.
+ 
+| API Gateway ↔ Microservices
+| HTTP/2 (internal, mTLS)
+| Routed service calls within the Kubernetes cluster.
+ 
+| Services ↔ PostgreSQL
+| TCP / PostgreSQL wire protocol
+| Persistent relational data.
+ 
+| Services ↔ Redis
+| TCP / RESP
+| Session cache, feed cache, rate-limit counters.
+ 
+| Services ↔ S3
+| HTTPS (AWS SDK)
+| Image and asset storage.
+ 
+| Services ↔ Elasticsearch
+| HTTPS (REST)
+| Full-text and tag-based image search.
+ 
+| Services ↔ Message Queue
+| AMQP (RabbitMQ) or SQS
+| Asynchronous event delivery (upload events, notification triggers).
+ 
+| EditingEngine ↔ Pixlr
+| HTTPS / OAuth 2.0
+| Redirect-based handoff for photo editing session.
+ 
+| SubscriptionSvc ↔ Stripe
+| HTTPS / Stripe SDK
+| Payment intent creation, webhook receipt.
+ 
+| NotificationWorker ↔ FCM/APNs
+| HTTPS
+| Push notification delivery.
+ 
+| NotificationWorker ↔ SendGrid
+| HTTPS / SMTP
+| Email delivery.
+|===

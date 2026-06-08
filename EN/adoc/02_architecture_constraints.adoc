@@ -30,3 +30,19 @@ The following constraints were identified from the Business Requirements Documen
 |The startup's business model depends on monthly and annual premium subscriptions, with possible future sponsored content and advertising. The architecture must therefore separate free and premium features securely and allow integration with payment providers and advertising systems later on.
 
 |===
+
+=== Organisational Constraints
+ 
+[options="header",cols="1,2,3"]
+|===
+| ID | Constraint | Rationale
+
+| OC_1
+| GDPR compliance mandatory
+| Users expected globally; EU users require GDPR-compliant data handling, right-to-erasure support, and data residency options.
+
+| OC_2
+| App Store and Play Store approval pipeline
+| All releases must pass Apple and Google review; no undisclosed third-party data sharing.
+|===
+
