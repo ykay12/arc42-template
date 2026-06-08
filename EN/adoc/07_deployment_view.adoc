@@ -1,100 +1,113 @@
-ifndef::imagesdir[:imagesdir: ../images]
+=== Deployment Diagram
+ 
+[source]
+----
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  CLIENT DEVICES                                                                     │
+│                                                                                     │
+│   ┌──────────────────────┐          ┌──────────────────────┐                        │
+│   │  iOS App             │          │  Android App         │                        │
+│   │  Swift / SwiftUI     │          │  Kotlin / Jetpack    │                        │
+│   └──────────┬───────────┘          └──────────┬───────────┘                        │
+└──────────────┼────────────────────────────────-┼────────────────────────────────────┘
+               │ HTTPS                            │ HTTPS
+               ▼                                 ▼
+┌──────────────────────────────────┐   ┌──────────────────────────────────────────────┐
+│  CDN / EDGE  (CloudFront)        │   │  API GATEWAY  (Kong)                         │
+│  ┌────────────────────────────┐  │   │  ┌──────────────────────────────────────┐    │
+│  │  Edge PoP                  │  │   │  │  Auth · Rate-limit · Routing · TLS   │    │
+│  └────────────┬───────────────┘  │   └─────────────────────┼────────────────────────┘
+└───────────────┼──────────────────┘     origin pull          │ HTTP/2 mTLS (internal)
+                │ origin pull            ───────────►         │
+                ▼                                             ▼
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│  APPLICATION CLUSTER  (AWS EKS / Kubernetes)                                         │
+│                                                                                      │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐     │
+│  │ UserProfile Svc │ │ ImageFeed Svc   │ │ EditingEngine   │ │ CommunityHub    │     │
+│  │ Pod x2          │ │ Pod x3          │ │ Svc  Pod x2     │ │ Svc  Pod x2     │     │
+│  └────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘     │
+│           │                   │                    │ HTTPS             │             │
+│           │          ┌────────┴────────┐           │ (Pixlr)          │              │
+│           │          │ SubscriptionSvc │           ▼                  │              │
+│           │          │ Pod x1          │    ┌─────────────┐           │              │
+│           │          └────────┬────────┘    │  External   │           │              │
+│           │                   │ HTTPS       │  Services   │           │              │
+│           │                   │ (Stripe)    │  (see right)│           │              │
+│           │                   │             └─────────────┘           │              │
+│           │        ┌──────────┴──────────┐                            │              │
+│           │        │   EntityManager     │◄───────────────────────────┘              │
+│           │        │   Pod x2            │                                           │
+│           │        └──────────┬──────────┘                                           │
+│           │                   │                                                      │
+│  ┌────────┴──────────────────────────┐     ┌────────────────────────┐                │
+│  │  Message Queue  (SQS)             │────►│  Notification Worker   │                │
+│  │  image.uploaded                   │     │  Pod x1                │                │
+│  │  interaction.created              │     └────────────────────────┘                │
+│  │  challenge.submitted              │                                               │
+│  └───────────────────────────────────┘                                               │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+               │ SQL/TCP                      │ HTTPS / SDK
+               ▼                             ▼
+┌─────────────────────────────────────────────────────────────────────────────────────┐
+│  DATA LAYER  (private subnet — no public IPs)                                       │
+│                                                                                     │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────┐ ┌─────────────┐    │
+│  │ PostgreSQL   │ │ PostgreSQL   │ │ Redis        │ │ S3       │ │ OpenSearch  │    │
+│  │ Primary DB   │ │ Read Replica │ │ ElastiCache  │ │ (images) │ │ (search)    │    │
+│  │ (RDS Multi-AZ│ │              │ │ sessions·    │ │          │ │             │    │
+│  │  eu-west-1)  │ │              │ │ feed cache   │ │          │ │             │    │
+│  └──────────────┘ └──────────────┘ └──────────────┘ └──────────┘ └─────────────┘    │
+└─────────────────────────────────────────────────────────────────────────────────────┘
+ 
+┌─────────────────────────────────────────┐   ┌────────────────────────────────────┐
+│  EXTERNAL / THIRD-PARTY SERVICES        │   │  MONITORING & OBSERVABILITY        │
+│                                         │   │                                    │
+│  • Pixlr API  (photo editing SaaS)      │   │  • Prometheus + Grafana (metrics)  │
+│  • Stripe  (payment gateway)            │   │  • Jaeger  (distributed tracing)   │
+│  • Facebook / Instagram  (social share) │   │  • ELK Stack  (log aggregation)    │
+│  • FCM / APNs  (push notifications)     │   │  • PagerDuty  (alerting)           │
+│  • SendGrid / SES  (email)              │   │                                    │
+│  • Apple / Google IAP  (subscriptions)  │   │                                    │
+└─────────────────────────────────────────┘   └────────────────────────────────────┘
+----
+ 
+A draw.io version of this diagram is provided as a companion file `deployment_view.xml` (importable via Extras → Edit Diagram in diagrams.net).
 
-[[section-deployment-view]]
-
-
-== Deployment View
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The deployment view describes:
-
- 1. technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and
-
-2. mapping of (software) building blocks to that infrastructure elements.
-
-Often systems are executed in different environments, e.g. development environment, test environment, production environment. In such cases you should document all relevant environments.
-
-Especially document a deployment view if your software is executed as distributed system with more than one computer, processor, server or container or when you design and construct your own hardware processors and chips.
-
-From a software perspective it is sufficient to capture only those elements of an infrastructure that are needed to show a deployment of your building blocks. Hardware architects can go beyond that and describe an infrastructure to any level of detail they need to capture.
-
-.Motivation
-Software does not run without hardware.
-This underlying infrastructure can and will influence a system and/or some
-cross-cutting concepts. Therefore, there is a need to know the infrastructure.
-
-.Form
-
-Maybe a highest level deployment diagram is already contained in section 3.2. as
-technical context with your own infrastructure as ONE black box. In this section one can
-zoom into this black box using additional deployment diagrams:
-
-* UML offers deployment diagrams to express that view. Use it, probably with nested diagrams,
-when your infrastructure is more complex.
-* When your (hardware) stakeholders prefer other kinds of diagrams rather than a deployment diagram, let them use any kind that is able to show nodes and channels of the infrastructure.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-7/[Deployment View] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
-=== Infrastructure Level 1
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Describe (usually in a combination of diagrams, tables, and text):
-
-* distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them
-* important justifications or motivations for this deployment structure
-* quality and/or performance features of this infrastructure
-* mapping of software artifacts to elements of this infrastructure
-
-For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.
-****
-endif::arc42help[]
-
-_**<Overview Diagram>**_
-
-Motivation::
-
-_<explanation in text form>_
-
-Quality and/or Performance Features::
-
-_<explanation in text form>_
-
-Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
-
-
-=== Infrastructure Level 2
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you can include the internal structure of (some) infrastructure elements from level 1.
-
-Please copy the structure from level 1 for each selected element.
-****
-endif::arc42help[]
-
-==== _<Infrastructure Element 1>_
-
-_<diagram + explanation>_
-
-==== _<Infrastructure Element 2>_
-
-_<diagram + explanation>_
-
-...
-
-==== _<Infrastructure Element n>_
-
-_<diagram + explanation>_
+=== Deployment Zones
+ 
+[cols="2,4", options="header"]
+|===
+| Zone | Contents
+ 
+| Client Devices
+| iOS App (Swift / SwiftUI, distributed via App Store) and Android App (Kotlin / Jetpack Compose, distributed via Play Store).
+ 
+| CDN / Edge (CloudFront)
+| Global edge PoPs serving static assets (JS, fonts, app icons) and processed images. Origin pull from S3. Cache-Control headers set per asset type.
+ 
+| API Gateway (Kong)
+| Single entry point for all mobile API traffic. Responsibilities: JWT validation, rate limiting (per user and per IP), request routing to Kubernetes services, and TLS termination.
+ 
+| Application Cluster (EKS / Kubernetes)
+| All six microservices deployed as Kubernetes Deployments. HPA configured for UserProfile (min 2, max 8 pods), ImageFeed (min 3, max 12 pods), EditingEngine (min 2, max 6 pods), CommunityHub (min 2, max 8 pods), SubscriptionSvc (min 1, max 4 pods). NotificationWorker runs as a single replica with leader-election.
+ 
+| Data Layer
+a|
+* PostgreSQL (Amazon RDS, Multi-AZ): primary write node + read replica per service schema.
+* Redis (ElastiCache, cluster mode): session store, feed cache, rate-limit counters.
+* S3: image and asset object storage; versioning enabled; lifecycle policy archives originals to Glacier after 365 days.
+* Elasticsearch (Amazon OpenSearch): image tag and full-text search index.
+* SQS: managed message queues per event type (image.uploaded, interaction.created, challenge.submitted).
+ 
+| External Services
+| Pixlr API, Stripe, Facebook/Instagram Share API, FCM, APNs, SendGrid.
+ 
+| Monitoring & Observability
+| Prometheus + Grafana for metrics; Jaeger for distributed tracing; ELK stack for log aggregation; PagerDuty for alerting.
+|===
+ 
+=== Network Topology
+ 
+All inter-service communication within the Kubernetes cluster uses mTLS enforced by a service mesh (Istio). Services are not reachable from outside the cluster except through the API Gateway. The data layer sits in a private subnet with no public IP addresses. S3 access is via VPC endpoint (no public internet traversal).
+ 
