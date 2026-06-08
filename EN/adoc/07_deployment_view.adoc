@@ -1,78 +1,8 @@
+
 === Deployment Diagram
- 
-[source]
-----
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│  CLIENT DEVICES                                                                     │
-│                                                                                     │
-│   ┌──────────────────────┐          ┌──────────────────────┐                        │
-│   │  iOS App             │          │  Android App         │                        │
-│   │  Swift / SwiftUI     │          │  Kotlin / Jetpack    │                        │
-│   └──────────┬───────────┘          └──────────┬───────────┘                        │
-└──────────────┼────────────────────────────────-┼────────────────────────────────────┘
-               │ HTTPS                            │ HTTPS
-               ▼                                 ▼
-┌──────────────────────────────────┐   ┌──────────────────────────────────────────────┐
-│  CDN / EDGE  (CloudFront)        │   │  API GATEWAY  (Kong)                         │
-│  ┌────────────────────────────┐  │   │  ┌──────────────────────────────────────┐    │
-│  │  Edge PoP                  │  │   │  │  Auth · Rate-limit · Routing · TLS   │    │
-│  └────────────┬───────────────┘  │   └─────────────────────┼────────────────────────┘
-└───────────────┼──────────────────┘     origin pull          │ HTTP/2 mTLS (internal)
-                │ origin pull            ───────────►         │
-                ▼                                             ▼
-┌──────────────────────────────────────────────────────────────────────────────────────┐
-│  APPLICATION CLUSTER  (AWS EKS / Kubernetes)                                         │
-│                                                                                      │
-│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐     │
-│  │ UserProfile Svc │ │ ImageFeed Svc   │ │ EditingEngine   │ │ CommunityHub    │     │
-│  │ Pod x2          │ │ Pod x3          │ │ Svc  Pod x2     │ │ Svc  Pod x2     │     │
-│  └────────┬────────┘ └────────┬────────┘ └────────┬────────┘ └────────┬────────┘     │
-│           │                   │                    │ HTTPS             │             │
-│           │          ┌────────┴────────┐           │ (Pixlr)          │              │
-│           │          │ SubscriptionSvc │           ▼                  │              │
-│           │          │ Pod x1          │    ┌─────────────┐           │              │
-│           │          └────────┬────────┘    │  External   │           │              │
-│           │                   │ HTTPS       │  Services   │           │              │
-│           │                   │ (Stripe)    │  (see right)│           │              │
-│           │                   │             └─────────────┘           │              │
-│           │        ┌──────────┴──────────┐                            │              │
-│           │        │   EntityManager     │◄───────────────────────────┘              │
-│           │        │   Pod x2            │                                           │
-│           │        └──────────┬──────────┘                                           │
-│           │                   │                                                      │
-│  ┌────────┴──────────────────────────┐     ┌────────────────────────┐                │
-│  │  Message Queue  (SQS)             │────►│  Notification Worker   │                │
-│  │  image.uploaded                   │     │  Pod x1                │                │
-│  │  interaction.created              │     └────────────────────────┘                │
-│  │  challenge.submitted              │                                               │
-│  └───────────────────────────────────┘                                               │
-└──────────────────────────────────────────────────────────────────────────────────────┘
-               │ SQL/TCP                      │ HTTPS / SDK
-               ▼                             ▼
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│  DATA LAYER  (private subnet — no public IPs)                                       │
-│                                                                                     │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────┐ ┌─────────────┐    │
-│  │ PostgreSQL   │ │ PostgreSQL   │ │ Redis        │ │ S3       │ │ OpenSearch  │    │
-│  │ Primary DB   │ │ Read Replica │ │ ElastiCache  │ │ (images) │ │ (search)    │    │
-│  │ (RDS Multi-AZ│ │              │ │ sessions·    │ │          │ │             │    │
-│  │  eu-west-1)  │ │              │ │ feed cache   │ │          │ │             │    │
-│  └──────────────┘ └──────────────┘ └──────────────┘ └──────────┘ └─────────────┘    │
-└─────────────────────────────────────────────────────────────────────────────────────┘
- 
-┌─────────────────────────────────────────┐   ┌────────────────────────────────────┐
-│  EXTERNAL / THIRD-PARTY SERVICES        │   │  MONITORING & OBSERVABILITY        │
-│                                         │   │                                    │
-│  • Pixlr API  (photo editing SaaS)      │   │  • Prometheus + Grafana (metrics)  │
-│  • Stripe  (payment gateway)            │   │  • Jaeger  (distributed tracing)   │
-│  • Facebook / Instagram  (social share) │   │  • ELK Stack  (log aggregation)    │
-│  • FCM / APNs  (push notifications)     │   │  • PagerDuty  (alerting)           │
-│  • SendGrid / SES  (email)              │   │                                    │
-│  • Apple / Google IAP  (subscriptions)  │   │                                    │
-└─────────────────────────────────────────┘   └────────────────────────────────────┘
-----
- 
-A draw.io version of this diagram is provided as a companion file `deployment_view.xml` (importable via Extras → Edit Diagram in diagrams.net).
+
+image::../images/deployementview.drawio(1).png[Deployment View]
+
 
 === Deployment Zones
  
@@ -90,11 +20,11 @@ A draw.io version of this diagram is provided as a companion file `deployment_vi
 | Single entry point for all mobile API traffic. Responsibilities: JWT validation, rate limiting (per user and per IP), request routing to Kubernetes services, and TLS termination.
  
 | Application Cluster (EKS / Kubernetes)
-| All six microservices deployed as Kubernetes Deployments. HPA configured for UserProfile (min 2, max 8 pods), ImageFeed (min 3, max 12 pods), EditingEngine (min 2, max 6 pods), CommunityHub (min 2, max 8 pods), SubscriptionSvc (min 1, max 4 pods). NotificationWorker runs as a single replica with leader-election.
+| Four coarse-grained SOA services, each exposing well-defined service contracts over REST. Services scale horizontally via auto-scaling policies based on observed load. *UserService* handles user profiles, authentication, and subscriptions. *ContentService* covers the image feed, uploads, community features, and social sharing. *EditingService* manages in-app editing tools, filters, and the Pixlr bridge. *NotificationService* handles push notifications and email delivery. All services share the EntityManager data access layer and communicate asynchronously via the shared service bus (SQS).
  
 | Data Layer
 a|
-* PostgreSQL (Amazon RDS, Multi-AZ): primary write node + read replica per service schema.
+* PostgreSQL (Amazon RDS, Multi-AZ): primary write node + read replica; shared schema accessed by all services via EntityManager.
 * Redis (ElastiCache, cluster mode): session store, feed cache, rate-limit counters.
 * S3: image and asset object storage; versioning enabled; lifecycle policy archives originals to Glacier after 365 days.
 * Elasticsearch (Amazon OpenSearch): image tag and full-text search index.
@@ -106,6 +36,8 @@ a|
 | Monitoring & Observability
 | Prometheus + Grafana for metrics; Jaeger for distributed tracing; ELK stack for log aggregation; PagerDuty for alerting.
 |===
+
+
  
 === Network Topology
  
