@@ -1,7 +1,7 @@
 
 === Deployment Diagram
 
-image::../images/deployementview.drawio(1).png[Deployment View]
+image::../images/deploymentview.png[Deployment View]
 
 
 === Deployment Zones
