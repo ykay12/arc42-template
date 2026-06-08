@@ -36,9 +36,81 @@ endif::arc42help[]
 |===
 |Term |Definition
 
-|<Term-1>
-|<definition-1>
+|Stakeholder
+|Any person, role, or organization with a legitimate interest in the system or its architecture, including end users, the development team, operators, and the client.
 
-|<Term-2>
-|<definition-2>
+|Quality Goal
+|A top-priority quality attribute the architecture must satisfy, such as performance, security, availability, or maintainability.
+
+|Quality Scenario
+|A concrete, measurable statement of how the system should react to a defined stimulus, used to make a quality goal verifiable.
+
+|Functional Requirement
+|A statement of a specific behaviour or function the system must provide.
+
+|Constraint
+|A technical, organizational, or legal restriction the team must respect, which limits the available design options.
+
+|Architecture Decision Record (ADR)
+|A concise document capturing a single architectural decision together with its context, the options considered, and its consequences.
+
+|Building Block
+|A structural unit of the system (subsystem, component, or module) shown in the static decomposition of the architecture.
+
+|Interface
+|A defined boundary across which two building blocks interact, specifying the operations and data exchanged between them.
+
+|Context Boundary
+|The line that separates the system under design from the external actors and neighbouring systems it communicates with.
+
+|Cross-cutting Concept
+|A solution principle or pattern applied consistently across many building blocks, such as authentication, logging, persistence, or error handling.
+
+|Persistence
+|The mechanism by which application data is stored durably so it survives beyond a single program execution, typically in a database.
+
+|Scalability
+|The ability of the system to handle increasing load by adding resources, without a disproportionate loss of performance.
+
+|Availability
+|The proportion of time the system is operational and able to serve requests, often expressed as a percentage (e.g. 99.9%).
+
+|React Native
+|A cross-platform framework that lets a single JavaScript/TypeScript codebase run as a native app on both iOS and Android.
+
+|MVVM (Model-View-ViewModel)
+|A presentation pattern that separates the UI (View) from its state and logic (ViewModel) and the underlying data (Model), improving testability and maintainability.
+
+|Repository Pattern
+|A data-access pattern that hides the source of data behind a uniform interface, decoupling business logic from the underlying storage or API.
+
+|REST API
+|An HTTP-based interface style in which resources are addressed by URLs and manipulated with standard methods (GET, POST, PUT, DELETE).
+
+|JWT (JSON Web Token)
+|A signed, self-contained token used to authenticate a user and carry their identity and claims between client and server.
+
+|HTTPS
+|HTTP secured with TLS encryption, ensuring data exchanged between client and server cannot be read or tampered with in transit.
+
+|Hashing
+|A one-way transformation applied to sensitive data such as passwords so the original value cannot be recovered from what is stored.
+
+|CDN (Content Delivery Network)
+|A geographically distributed set of servers that caches and serves images close to the user, reducing load latency.
+
+|Horizontal Scaling
+|Increasing capacity by adding more server instances rather than enlarging a single machine, enabling the system to absorb growing traffic.
+
+|GDPR (General Data Protection Regulation)
+|EU regulation governing the collection, storage, and processing of personal data, with which the system must comply.
+
+|CI/CD (Continuous Integration / Continuous Delivery)
+|An automated pipeline that builds, tests, and deploys changes, supporting frequent and reliable releases with minimal manual effort.
+
+|Pixlr
+|The external cloud-based photo-editing service integrated via API to provide Vividly's image editing and filter capabilities.
+
+|Payment Provider
+|An external service that processes subscription payments and returns confirmation, keeping card data out of the application itself.
 |===
