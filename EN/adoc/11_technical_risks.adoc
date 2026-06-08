@@ -1,27 +1,61 @@
-ifndef::imagesdir[:imagesdir: ../images]
-
-[[section-technical-risks]]
-== Risks and Technical Debts
-
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-A list of identified technical risks or technical debts, ordered by priority
-
-.Motivation
-“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.) 
-
-This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.
-
-.Form
-List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
-
-****
-endif::arc42help[]
+== Risks and Technical Debt
+ 
+=== Identified Risks
+ 
+[cols="1,3,1,3", options="header"]
+|===
+| ID | Risk | Likelihood | Mitigation
+ 
+| R-01
+| Pixlr API changes break the PixlrBridge integration.
+| Medium
+| Pin to a specific Pixlr API version; monitor Pixlr changelog; maintain a contract test suite against Pixlr's staging environment.
+ 
+| R-02
+| Image storage costs grow faster than revenue as the user base scales.
+| High
+| Implement aggressive CDN caching (long TTLs for processed images); lifecycle policy to Glacier for originals > 365 days; enforce 50-image/month limit on free tier.
+ 
+| R-03
+| A Kubernetes node failure causes service disruption.
+| Low
+| Multi-AZ node groups; pod anti-affinity rules ensure replicas span AZs; HPA ensures minimum replica count is maintained.
+ 
+| R-04
+| GDPR non-compliance due to incomplete data erasure.
+| Medium
+| Automated UserDeletionSaga with audit log; quarterly compliance review; legal review of data flows before launch.
+ 
+| R-05
+| GraphQL query complexity causes backend overload (N+1 queries).
+| Medium
+| Apollo Federation with query complexity limits; DataLoader pattern for batched database calls; query depth limit of 5.
+ 
+| R-06
+| Stripe webhook replay attacks lead to duplicate subscription activations.
+| Low
+| Idempotency key validation on all webhook handlers; store processed webhook IDs in Redis with 24-hour TTL.
+|===
+ 
+=== Known Technical Debt
+ 
+[cols="1,3,2", options="header"]
+|===
+| ID | Description | Planned Resolution
+ 
+| TD-01
+| EntityManager is a shared library rather than a per-service ORM; changes to the shared schema risk breaking multiple services simultaneously.
+| Migrate to per-service schema ownership in Q3; use database-per-service pattern.
+ 
+| TD-02
+| The FeedBuilder in ImageFeed computes feeds synchronously on request; at scale this will become a bottleneck.
+| Introduce pre-computed feed materialisation using a background worker (fan-out-on-write) in Q2.
+ 
+| TD-03
+| Push notification delivery success is not tracked; failures are silently dropped.
+| Implement delivery receipt tracking and retry logic for FCM/APNs in Q2.
+ 
+| TD-04
+| No automated contract tests between mobile clients and the API Gateway; breaking changes are discovered in QA.
+| Introduce Pact contract testing in the CI pipeline by end of Q1.
+|===
