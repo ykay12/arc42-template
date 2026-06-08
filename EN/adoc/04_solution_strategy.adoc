@@ -3,4 +3,103 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
-_<to be filled>_
+This section summarizes the fundamental decisions that shape Vividly's
+architecture. Each decision is driven by the quality goals from Section 1
+and the constraints (TC_1–TC_5) from Section 2, and is refined further in
+the building block view, runtime view, and architecture decisions.
+
+=== Technology Decisions
+
+[cols="1,2" options="header"]
+|===
+|Area |Decision
+
+|Client (mobile)
+|*Native apps*: iOS in *Swift / SwiftUI* and Android in *Kotlin / Jetpack
+Compose* (satisfies TC_1 by supporting both platforms). Native is chosen to
+maximize rendering performance for image-heavy feeds (Performance Efficiency
+goal), accepting the higher cost of two codebases.
+
+|Backend
+|A *service-oriented (SOA)* backend of four coarse-grained Java services
+exposing *REST APIs* over *HTTPS*, running on *Kubernetes (Amazon EKS)* behind
+an *API Gateway (Kong)*. Services scale horizontally and communicate
+asynchronously over a message bus (*Amazon SQS*).
+
+|Persistence
+|*PostgreSQL* (relational) for user accounts, image metadata, comments, and
+subscription data, where consistency and clear relationships matter.
+
+|Media storage & delivery
+|*AWS S3* for durable image storage and *Amazon CloudFront (CDN)* for fast,
+geographically distributed delivery (satisfies TC_4).
+
+|Image editing
+|Integration with the external *Pixlr* API for editing and filters, so this
+capability does not have to be built in-house (satisfies TC_2).
+
+|Payments
+|An external *payment provider* handles subscription billing, keeping card
+data out of Vividly's own systems (supports TC_5 and the Security goal).
+|===
+
+=== Structure and Patterns (Top-level Decomposition)
+
+Vividly follows a *clean architecture* that separates the UI, business logic,
+and data layers. Within that:
+
+* *MVVM (Model-View-ViewModel)* organizes the UI on both native clients,
+keeping views thin and logic testable.
+* The backend is decomposed into four *SOA services* by responsibility —
+*UserService* (profiles, authentication, subscriptions), *ContentService*
+(feed, uploads, community features, social sharing), *EditingService*
+(editing tools, filters, the Pixlr bridge), and *NotificationService* (push
+and email) — each exposing well-defined REST contracts.
+* Data access is centralized through a shared *EntityManager (JPA)* layer over
+PostgreSQL, so services do not couple to storage details directly.
+* Clients reach the backend through the *API Gateway* over *REST/HTTPS*;
+services communicate with each other *asynchronously via the SQS message bus*,
+and with external services (Pixlr, Stripe) over REST.
+
+=== How the Quality Goals Are Achieved
+
+[cols="1,2" options="header"]
+|===
+|Quality Goal |Solution Approach
+
+|Maintainability
+|Clean architecture, MVVM, and the SOA decomposition keep modules loosely
+coupled and independently changeable; well-defined service contracts ease
+onboarding. (Note: native dual codebases raise maintenance cost — this is the
+trade-off accepted in favour of the Performance goal.)
+
+|Operability
+|A *CI/CD* pipeline automates build, test, and deployment, allowing a small
+team to operate the system reliably with minimal manual effort.
+
+|Performance Efficiency
+|Native clients give the fastest rendering for image-heavy feeds; images are
+served from a *CDN (CloudFront)* close to the user, S3 provides scalable
+storage, and horizontally scaling services keep latency low under load.
+
+|Usability
+|MVVM and a clear separation of concerns support a consistent, intuitive
+UI/UX; complex editing is delegated to Pixlr behind a simple interface.
+
+|Cost Efficiency
+|Managed cloud services (RDS, S3, EKS, SQS) and outsourcing editing to Pixlr
+avoid building and running expensive infrastructure in-house, offsetting some
+of the added cost of maintaining two native codebases.
+
+|Security
+|HTTPS for all communication, JWT-based authentication, hashed passwords,
+externalized payment handling, and GDPR-compliant data handling (TC_3)
+protect personal and financial data.
+|===
+
+=== Organizational Decisions
+
+The team works in a *Kanban* flow, pulling work items continuously rather
+than in fixed sprints — a lightweight fit for a small startup team. Delivery
+is supported by the *CI/CD* pipeline described above, enabling frequent,
+low-risk releases.
