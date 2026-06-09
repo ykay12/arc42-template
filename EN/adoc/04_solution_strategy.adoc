@@ -15,9 +15,10 @@ the building block view, runtime view, and architecture decisions.
 |Area |Decision
 
 |Client (mobile)
-|*React Native* — a single cross-platform codebase delivered as native iOS
-and Android apps (satisfies TC_1 and keeps development cost, time-to-market,
-and maintenance effort low for a small team).
+|*Native apps*: iOS in *Swift / SwiftUI* and Android in *Kotlin / Jetpack
+Compose* (satisfies TC_1 by supporting both platforms). Native is chosen to
+maximise rendering performance for image-heavy feeds (Performance Efficiency
+goal), accepting the cost of maintaining two codebases.
 
 |Backend
 |A *service-oriented (SOA)* backend of four coarse-grained Java services
@@ -47,8 +48,8 @@ data out of Vividly's own systems (supports TC_5 and the Security goal).
 Vividly follows a *clean architecture* that separates the UI, business logic,
 and data layers. Within that:
 
-* *MVVM (Model-View-ViewModel)* organizes the React Native UI, keeping views
-thin and logic testable.
+* *MVVM (Model-View-ViewModel)* organizes the UI on both native clients,
+keeping views thin and logic testable.
 * The backend is decomposed into four *SOA services* by responsibility —
 *UserService* (profiles, authentication, subscriptions), *ContentService*
 (feed, uploads, community features, social sharing), *EditingService*
@@ -68,9 +69,9 @@ and with external services (Pixlr, Stripe) over REST.
 
 |Maintainability
 |Clean architecture, MVVM, and the SOA decomposition keep modules loosely
-coupled and independently changeable; a single shared React Native codebase
-plus well-defined service contracts lower maintenance effort and speed up
-onboarding of new developers.
+coupled and independently changeable; well-defined service contracts ease
+onboarding. (Trade-off: two native codebases raise client-side maintenance
+cost — accepted in favour of the Performance Efficiency goal.)
 
 |Operability
 |A *CI/CD* pipeline automates build, test, and deployment, allowing a small
@@ -86,9 +87,9 @@ low under growing traffic.
 UI/UX; complex editing is delegated to Pixlr behind a simple interface.
 
 |Cost Efficiency
-|Cross-platform development with React Native, managed cloud services (RDS,
-S3, EKS, SQS), and outsourcing editing to Pixlr avoid building and running
-expensive infrastructure in-house.
+|Managed cloud services (RDS, S3, EKS, SQS) and outsourcing editing to Pixlr
+avoid building and running expensive infrastructure in-house, offsetting some
+of the added cost of maintaining two native codebases.
 
 |Security
 |HTTPS for all communication, JWT-based authentication, hashed passwords,

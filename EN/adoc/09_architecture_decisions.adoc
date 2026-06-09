@@ -5,13 +5,13 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 The following decisions are documented using the Nygard ADR (Architecture Decision Record) structure.
 
-=== ADR-1: Use React Native as the Cross-Platform Mobile Framework
+=== ADR-1: Build Native iOS and Android Apps (Swift + Kotlin)
 
-*Context*: The app needs to run on both iOS and Android with one shared codebase. Building two separate native apps would double development effort, which is not feasible for a startup with limited resources.
+*Context*: The app must run on both iOS and Android. As an image-heavy product, rendering performance and a smooth, platform-native user experience are central to the Performance Efficiency and Usability goals. A cross-platform framework would share one codebase but cannot fully match native performance and platform integration.
 
-*Decision*: We will use React Native as the cross-platform mobile framework.
+*Decision*: We will build two native apps — iOS in Swift (SwiftUI) and Android in Kotlin (Jetpack Compose).
 
-*Consequences*: Faster development with one codebase and a shared component library. However, the app may have slightly lower performance than fully native apps in graphics-intensive scenarios.
+*Consequences*: Best possible rendering performance and immediate access to the latest platform features and UX conventions. However, two separate codebases roughly double client-side development and maintenance effort — a significant cost for a small team that works against the Maintainability and Cost Efficiency goals.
 
 ---
 

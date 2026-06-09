@@ -22,25 +22,22 @@ An administrator uses *Vividly* to perform moderation and management tasks acros
 ==== External social media platforms
 *Vividly* interacts with *external social media platforms* to share images directly from the application.
 
-// image::context-diagram.png["Vividly Context Diagram"]
-
-
 === Vividly Technical Context
 
 image::../images/TechnicalContextDiagram.drawio.png["Vividly Business Context Diagram"]
 
 *Vividly* is broken into multiple architectural components and services:
 
-===== Mobile App
+==== Mobile App
 The client application runs natively on modern mobile platforms, encompassing both *Android* and *iOS* devices. The app communicates with the *CDN* over HTTPS to fetch static content and media efficiently, while executing business operations by sending HTTPS/REST/GraphQL requests directly through the *API Gateway*.
 
-===== API Gateway & Services
+==== API Gateway & Services
 The *API Gateway* acts as the single entry point, routing incoming client traffic over HTTPS to the core backend *Services*. The backend is modularized into dedicated domain services:
 * *SubscriptionService*: Manages user memberships and payments, integrating with *Stripe* via HTTPS / Stripe SDK.
 * *EditingService*: Handles image manipulation tasks, securely authenticating and communicating with *Pixlr* via HTTPS/OAuth.
 * *ContentService*: Orchestrates core application data and feeds, dispatching events and offloading intensive tasks or search indexing.
 
-===== Infrastructure & Data Management
+==== Infrastructure & Data Management
 The core services rely on a robust infrastructure layer for data persistence, messaging, and search capabilities:
 * *Postgres*: Serving as the primary relational database, accessed via the TCP / PostgreSQL wire protocol.
 * *S3*: Providing object storage for images and media, integrated via HTTPS (AWS SDK).

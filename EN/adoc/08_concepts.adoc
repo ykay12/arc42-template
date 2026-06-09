@@ -5,9 +5,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Development Concepts
 
-Vividly is built with React Native for cross-platform mobile development, targeting both iOS and Android from a single codebase. The architecture follows clean architecture principles with a clear separation of three layers:
+Vividly is built as two native mobile apps — iOS in Swift (SwiftUI) and Android in Kotlin (Jetpack Compose) — to maximise performance and platform-native UX for an image-heavy product. Both apps follow the same clean architecture principles with a clear separation of three layers:
 
-* *UI layer* — React Native components, screens, and navigation
+* *UI layer* — native UI components, screens, and navigation (SwiftUI / Jetpack Compose)
 * *Business logic layer* — use cases, state management, and domain rules
 * *Data layer* — repositories, API clients, and local storage
 

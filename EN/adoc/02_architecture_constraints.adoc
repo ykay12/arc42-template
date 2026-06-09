@@ -11,7 +11,7 @@ The following constraints were identified from the Business Requirements Documen
 
 |TC_1
 |Cross-platform mobile support: iOS and Android
-|The startup targets a global audience of millennials and Gen Z users on both major mobile platforms. Using a cross-platform framework reduces development cost, shortens time-to-market, and simplifies maintenance for a startup with limited resources.
+|The startup targets a global audience of millennials and Gen Z users on both major mobile platforms. Native apps (Swift for iOS, Kotlin for Android) are built to maximise rendering performance and platform-native UX for an image-heavy product, accepting the higher effort of maintaining two codebases.
 
 |TC_2
 |The architecture must support integration with Pixlr

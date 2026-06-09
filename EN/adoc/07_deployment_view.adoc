@@ -1,4 +1,9 @@
 
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-deployment-view]]
+== Deployment View
+
 === Deployment Diagram
 
 image::../images/deploymentview.png[Deployment View]
@@ -11,7 +16,7 @@ image::../images/deploymentview.png[Deployment View]
 | Zone | Contents
  
 | Client Devices
-| React Native app from a single cross-platform codebase, delivered as a native iOS app (distributed via App Store) and a native Android app (distributed via Play Store).
+| iOS App (Swift / SwiftUI, distributed via App Store) and Android App (Kotlin / Jetpack Compose, distributed via Play Store).
  
 | CDN / Edge (CloudFront)
 | Global edge PoPs serving static assets (JS, fonts, app icons) and processed images. Origin pull from S3. Cache-Control headers set per asset type.
