@@ -4,7 +4,7 @@
  
 The quality tree structures the top-level quality goals (from Section 1) into concrete sub-characteristics, each linked to the scenarios that make them measurable. Priority is indicated as *(H)* high, *(M)* medium, or *(L)* low.
 
-image::../images/Quality.png[Quality Tree]
+image::../images/vividly_quality_tree.svg[Quality Tree]
 
 
  
