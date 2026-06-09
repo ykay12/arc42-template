@@ -8,100 +8,95 @@ image::../images/vividly_quality_tree.svg[Quality Tree]
 
 
  
-[cols="1,2,2,1,1", options="header"]
+[cols="1,1,2,1,1", options="header"]
 |===
-| Quality Goal | Sub-characteristic | Scenario / Indicator | Priority | Section ref.
- 
-| Performance
-| Feed response time
-| P95 < 500 ms at 10k concurrent users
-| H
-| QS-01
- 
-| Performance
-| Upload acknowledgement
-| < 3 s for 20 MB image on 4G
-| H
-| QS-02
- 
-| Performance
-| Image derivative availability
-| Processed sizes ready < 10 s after upload
-| M
-| QS-02
- 
-| Reliability
-| Service degradation isolation
-| SubscriptionSvc outage does not break active sessions
-| H
-| QS-03
- 
-| Reliability
-| Third-party fault tolerance
-| Pixlr outage handled with graceful fallback
-| H
-| QS-07
- 
-| Reliability
-| Data durability
-| Zero image loss after HTTP 201 upload confirmation
-| H
-| QS-02
- 
-| Security
-| Token expiry enforcement
-| Tokens > 15 min (access) or 30 days (refresh) rejected
-| H
-| QS-04
- 
-| Security
-| GDPR right-to-erasure
-| Full erasure or anonymisation within 72 hours
-| H
-| QS-05
- 
-| Security
-| Webhook replay protection
-| Duplicate Stripe webhooks produce no duplicate effects
-| M
-| R-06
- 
-| Scalability
-| Horizontal scaling
-| HPA scales ImageFeed to 12 pods under peak load
-| M
-| QS-01
- 
-| Scalability
-| Storage cost efficiency
-| CDN cache hit ratio > 90%; Glacier archival after 365 days
-| M
-| R-02
+| Quality Goal | Priority | Sub-characteristic / Indicator | Scenario ref. | Section ref.
  
 | Maintainability
-| Zero-downtime deployability
-| Rolling deploy with no user-visible interruption
-| M
+| H
+| Clean architecture and SOA decomposition keep modules loosely coupled; well-defined service contracts ease onboarding
 | QS-06
+| ADR-1
  
 | Maintainability
-| API contract stability
-| Pact contract tests in CI prevent breaking client changes
-| M
+| H
+| Automated contract tests in CI/CD prevent breaking API changes
+| —
 | TD-04
  
-| Usability
-| Onboarding speed
-| New user registered and first image uploaded < 5 minutes
-| L
+| Operability
+| H
+| CI/CD pipeline automates build, test, and deployment; rolling deploys with zero downtime
+| QS-06
+| ADR-1
+ 
+| Operability
+| H
+| Full observability via Prometheus, Jaeger, and ELK; PagerDuty alerting for on-call team
+| —
 | —
  
-| Usability
-| Feature discoverability
-| Core editing and community features reachable within 2 taps
-| L
+| Performance Efficiency
+| H
+| P95 feed response time < 500 ms under 10k concurrent users
+| QS-01
 | —
+ 
+| Performance Efficiency
+| H
+| Image upload acknowledged < 3 s for 20 MB on 4G; derivatives ready < 10 s
+| QS-02
+| —
+ 
+| Performance Efficiency
+| M
+| Images served from CloudFront CDN; cache hit ratio > 90%
+| —
+| R-02
+ 
+| Usability
+| M
+| Intuitive UI/UX for all skill levels; new user registered and first image uploaded < 5 minutes
+| —
+| ADR-1
+ 
+| Usability
+| M
+| Complex editing delegated to Pixlr behind a simple interface; core features reachable within 2 taps
+| QS-07
+| ADR-2
+ 
+| Cost Efficiency
+| M
+| Managed cloud services (RDS, S3, EKS, SQS) avoid expensive in-house infrastructure
+| —
+| R-02
+ 
+| Cost Efficiency
+| M
+| Editing outsourced to Pixlr; S3 lifecycle policy archives originals to Glacier after 365 days
+| —
+| ADR-2
+ 
+| Security
+| H
+| HTTPS for all communication; JWT-based authentication; tokens expired after 15 min (access) / 30 days (refresh)
+| QS-04
+| TC_3
+ 
+| Security
+| H
+| Passwords hashed with bcrypt; GDPR-compliant data handling; right-to-erasure completed within 72 hours
+| QS-05
+| TC_3
+ 
+| Security
+| M
+| Stripe webhook idempotency prevents duplicate subscription activations
+| —
+| R-06
 |===
+
 
 === Quality Scenarios
  
