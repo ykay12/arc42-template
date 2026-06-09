@@ -3,10 +3,10 @@
 === Quality Tree
  
 The quality tree structures the top-level quality goals (from Section 1) into concrete sub-characteristics, each linked to the scenarios that make them measurable. Priority is indicated as *(H)* high, *(M)* medium, or *(L)* low.
- 
-[source]
 
 image::../images/Quality.png[Quality Tree]
+
+
  
 [cols="1,2,2,1,1", options="header"]
 |===
