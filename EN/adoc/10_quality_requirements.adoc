@@ -5,38 +5,8 @@
 The quality tree structures the top-level quality goals (from Section 1) into concrete sub-characteristics, each linked to the scenarios that make them measurable. Priority is indicated as *(H)* high, *(M)* medium, or *(L)* low.
  
 [source]
-----
-Image Sharing App — Quality Tree
-│
-├── Performance (H)
-│   ├── Feed response time          → QS-01  (P95 < 500 ms under 10k concurrent users)
-│   ├── Upload throughput           → QS-02  (20 MB image acknowledged < 3 s)
-│   └── Filter application speed    → QS-06  (in-app filters applied < 1 s on device)
-│
-├── Reliability (H)
-│   ├── Service availability        → QS-03  (SubscriptionSvc outage does not affect active users)
-│   ├── Third-party fault tolerance → QS-07  (Pixlr unavailability falls back gracefully)
-│   └── Data durability             → QS-02  (uploaded images never lost after 201 response)
-│
-├── Security (H)
-│   ├── Token integrity             → QS-04  (expired/revoked JWTs rejected with HTTP 401)
-│   ├── Data privacy                → QS-05  (GDPR erasure completes within 72 hours)
-│   └── Payment safety              →        (Stripe webhook idempotency; see R-06)
-│
-├── Scalability (M)
-│   ├── Horizontal pod scaling      → QS-01  (HPA maintains SLA under load spikes)
-│   └── Storage cost control        →        (CDN cache hit ratio > 90%; see R-02)
-│
-├── Maintainability (M)
-│   ├── Zero-downtime deployment    → QS-06  (rolling deploy of EditingEngine without outage)
-│   ├── Contract stability          →        (Pact tests prevent breaking API changes; TD-04)
-│   └── Independent deployability   →        (each microservice released on its own cadence)
-│
-└── Usability (L)
-    ├── Onboarding simplicity       →        (registration < 60 s; no payment required for free tier)
-    ├── Editing discoverability     →        (Pixlr entry point visible within 2 taps of any image)
-    └── Community engagement        →        (challenge participation reachable from home feed)
-----
+
+image::../images/Quality.png[Quality Tree]
  
 [cols="1,2,2,1,1", options="header"]
 |===
