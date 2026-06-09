@@ -3,87 +3,48 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-context-and-scope]]
 == Context and Scope
 
-=== Business Context
+=== Vividly Business Context
+
+image::../images/businessContextDiagram.drawio.png["Vividly Business Context Diagram"]
+
+==== User
+A regular user uses *Vividly* to register, login, edit and post images, use Pixlr editing tools, proceed with payments for subscriptions, and interact through likes or comments. They also receive content feeds, notifications, and subscription status updates from the platform.
+
+==== Admin
+An administrator uses *Vividly* to perform moderation and management tasks across the platform.
+
+==== Pixlr
+*Vividly* sends requests to access and use image editing tools provided by *Pixlr*. In return, *Pixlr* sends the edited images back to *Vividly*.
+
+==== Payment provider
+*Vividly* sends payment confirmations to the *Payment provider*, which in turn processes and sends subscription payment statuses back to *Vividly*.
+
+==== External social media platforms
+*Vividly* interacts with *external social media platforms* to share images directly from the application.
 
 // image::context-diagram.png["Vividly Context Diagram"]
 
-[options="header",cols="1,2,2"]
-|===
-|Communication Partner|Inputs to Vividly|Outputs from Vividly
 
-|Users
-|Uploads, Likes, Comments
-|Feed, Notifications, Subscription Status
+=== Vividly Technical Context
 
-|Pixlr API
-|Edited Images
-|Image Editing Requests
+image::../images/TechnicalContextDiagram.drawio.png["Vividly Business Context Diagram"]
 
-|Admin
-|Moderation & Management
-|—
+*Vividly* is broken into multiple architectural components and services:
 
-|Payment Provider
-|Payment Confirmation
-|Subscription Payments
+===== Mobile App
+The client application runs natively on modern mobile platforms, encompassing both *Android* and *iOS* devices. The app communicates with the *CDN* over HTTPS to fetch static content and media efficiently, while executing business operations by sending HTTPS/REST/GraphQL requests directly through the *API Gateway*.
 
-|Social Media Platforms
-|—
-|Shared Images
+===== API Gateway & Services
+The *API Gateway* acts as the single entry point, routing incoming client traffic over HTTPS to the core backend *Services*. The backend is modularized into dedicated domain services:
+* *SubscriptionService*: Manages user memberships and payments, integrating with *Stripe* via HTTPS / Stripe SDK.
+* *EditingService*: Handles image manipulation tasks, securely authenticating and communicating with *Pixlr* via HTTPS/OAuth.
+* *ContentService*: Orchestrates core application data and feeds, dispatching events and offloading intensive tasks or search indexing.
 
-|===
-
-=== Technical Context
+===== Infrastructure & Data Management
+The core services rely on a robust infrastructure layer for data persistence, messaging, and search capabilities:
+* *Postgres*: Serving as the primary relational database, accessed via the TCP / PostgreSQL wire protocol.
+* *S3*: Providing object storage for images and media, integrated via HTTPS (AWS SDK).
+* *Redis*: Utilized for high-performance caching and in-memory data structures, communicating over TCP / RESP.
+* *ElasticSearch*: Powers advanced search and indexing features, queried via HTTPS (REST).
+* *MessageQueue*: Handles asynchronous communication and event-driven workflows, utilizing AMQP (RabbitMQ) or SQS.
  
-[cols="2,2,3", options="header"]
-|===
-| Channel | Protocol | Purpose
- 
-| Mobile App ↔ API Gateway
-| HTTPS / REST / GraphQL
-| All user-initiated requests; JWT bearer tokens for authentication.
- 
-| Mobile App ↔ CDN
-| HTTPS
-| Static asset and image delivery.
- 
-| API Gateway ↔ Microservices
-| HTTP/2 (internal, mTLS)
-| Routed service calls within the Kubernetes cluster.
- 
-| Services ↔ PostgreSQL
-| TCP / PostgreSQL wire protocol
-| Persistent relational data.
- 
-| Services ↔ Redis
-| TCP / RESP
-| Session cache, feed cache, rate-limit counters.
- 
-| Services ↔ S3
-| HTTPS (AWS SDK)
-| Image and asset storage.
- 
-| Services ↔ Elasticsearch
-| HTTPS (REST)
-| Full-text and tag-based image search.
- 
-| Services ↔ Message Queue
-| AMQP (RabbitMQ) or SQS
-| Asynchronous event delivery (upload events, notification triggers).
- 
-| EditingEngine ↔ Pixlr
-| HTTPS / OAuth 2.0
-| Redirect-based handoff for photo editing session.
- 
-| SubscriptionSvc ↔ Stripe
-| HTTPS / Stripe SDK
-| Payment intent creation, webhook receipt.
- 
-| NotificationWorker ↔ FCM/APNs
-| HTTPS
-| Push notification delivery.
- 
-| NotificationWorker ↔ SendGrid
-| HTTPS / SMTP
-| Email delivery.
-|===
