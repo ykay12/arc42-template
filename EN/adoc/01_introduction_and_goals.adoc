@@ -5,7 +5,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Requirements Overview
  
-The Image Sharing App is a mobile-first platform targeting photography enthusiasts and professionals on iOS and Android. It enables users to share, discover, and edit high-quality images within a community-driven environment that differentiates itself from general social media through advanced editing tools, customisable filters, and structured community features such as challenges and competitions.
+Vividly is a mobile-first platform targeting photography enthusiasts and professionals on iOS and Android. It enables users to share, discover, and edit high-quality images within a community-driven environment that differentiates itself from general social media through advanced editing tools, customisable filters, and structured community features such as challenges and competitions.
  
 Key functional requirements derived from the Business Requirements Document:
  
